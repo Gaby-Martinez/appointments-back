@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+
+# Virtual Environments
+venv/
+.env
+
+# Poetry
+.poetry/
+poetry.lock
+
+# pyenv
+.python-version
+
+# mypy
+.mypy_cache/
+
+# Ruff
+.ruff_cache/
+
+# Database files
+*.db
+*.sqlite3
