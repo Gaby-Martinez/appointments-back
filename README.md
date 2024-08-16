@@ -7,8 +7,8 @@ This is a FastAPI backend for a medical appointment scheduling system.
 1. Clone the repository:
 
    ```
-   git clone https://github.com/your-username/medical-appointment-system.git
-   cd medical-appointment-system
+   git clone https://github.com/Gaby-Martinez/appointments-back.git
+   cd appointments-back
    ```
 
 2. Install Poetry:
