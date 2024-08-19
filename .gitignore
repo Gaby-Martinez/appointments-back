@@ -3,6 +3,8 @@ __pycache__/
 
 # Virtual Environments
 venv/
+env/
+.venv/
 .env
 
 # Poetry
@@ -21,3 +23,6 @@ poetry.lock
 # Database files
 *.db
 *.sqlite3
+
+# Pytest
+.pytest_cache/
