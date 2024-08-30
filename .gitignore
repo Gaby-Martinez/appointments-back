@@ -27,3 +27,6 @@ poetry.lock
 # Pytest
 .pytest_cache/
 .coverage
+
+# Kubernetes
+infrastructure/k8s/secret.yaml
