@@ -16,6 +16,7 @@ spec:
       containers:
         - name: appointments-backend
           image: appointments-backend:${TAG}
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
           envFrom:
