@@ -15,6 +15,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Use Minikube's Docker daemon
+        run: |
+          eval $(minikube -p minikube docker-env)
+
       - name: Build Docker image
         run: docker build -t appointments-backend:${{ github.ref_name }} .
 
@@ -24,7 +28,6 @@ jobs:
 
       - name: Deploy to Minikube
         run: |
-          minikube start
           kubectl create namespace appointments || true
           kubectl apply -f infrastructure/k8s/deployment.yaml -n appointments
           kubectl apply -f infrastructure/k8s/service.yaml -n appointments
