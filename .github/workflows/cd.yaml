@@ -24,7 +24,7 @@ jobs:
 
       - name: Update Kubernetes manifests
         run: |
-          sed -i 's|image: .*|image: appointments-backend:${{ github.ref_name }}|' infrastructure/k8s/deployment.yaml
+          sed -i 's|appointments-backend:${TAG}|appointments-backend:${{ github.ref_name }}|' infrastructure/k8s/deployment.yaml
 
       - name: Deploy to Minikube
         run: |
