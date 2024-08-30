@@ -11,6 +11,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup Minikube
+        run: |
+          minikube start
+          eval $(minikube -p minikube docker-env)
+          minikube status
+          kubectl get nodes
+          kubectl get pods -n kube-system
+
       - name: Build and Deploy in Minikube
         run: |
           # Ensure Docker uses Minikube's environment
@@ -37,3 +45,8 @@ jobs:
 
           # Rollout status check to ensure deployment is successful
           kubectl rollout status deployment/appointments-backend -n appointments
+
+      - name: Verify Deployment
+        run: |
+          kubectl get pods -n appointments
+          kubectl get services -n appointments
