@@ -6,44 +6,27 @@ on:
       - "v*"
 
 jobs:
+  ci:
+    uses: ./.github/workflows/ci.yaml
+
   deploy:
+    needs: ci
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Minikube
+      - name: Setup Minikube and Build
         run: |
           minikube start
           eval $(minikube -p minikube docker-env)
-          minikube status
-          kubectl get nodes
-          kubectl get pods -n kube-system
-
-      - name: Build and Deploy in Minikube
-        run: |
-          # Ensure Docker uses Minikube's environment
-          eval $(minikube -p minikube docker-env)
-
-          # Verify that the Docker environment is correctly set to Minikube
-          echo "Verifying Docker environment:"
-          docker info
-
-          # Build the Docker image
           docker build -t appointments-backend:${{ github.ref_name }} .
 
-          # Verify that the image was built in Minikube
-          echo "Listing Docker images in Minikube:"
-          docker images
-
-          # Update Kubernetes manifests with the correct image tag
+      - name: Deploy to Minikube
+        run: |
           sed -i 's|appointments-backend:${TAG}|appointments-backend:${{ github.ref_name }}|' infrastructure/k8s/deployment.yaml
-
-          # Apply the Kubernetes resources
           kubectl create namespace appointments || true
           kubectl apply -f infrastructure/k8s/deployment.yaml -n appointments
           kubectl apply -f infrastructure/k8s/service.yaml -n appointments
-
-          # Rollout status check to ensure deployment is successful
           kubectl rollout status deployment/appointments-backend -n appointments
 
       - name: Verify Deployment
