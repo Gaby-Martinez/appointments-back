@@ -155,7 +155,7 @@ git checkout -b AP-7-initialize-backend
 We use Conventional Commits to standardize our commit messages. The format is as follows:
 
 ```
-<type>[optional scope]: <description>
+<type>(<optional scope>): <description> (<ticket number>)
 [optional body]
 [optional footer(s)]
 ```
@@ -171,14 +171,18 @@ Types include:
 - `test`: Adding missing tests or correcting existing tests
 - `chore`: Changes to the build process or auxiliary tools and libraries such as documentation generation
 
-Include the Jira ticket number in square brackets after the type.
+Include the Jira ticket number in parentheses at the end of the description.
 
 Examples:
 
 ```
-feat[AP-7]: add initial project structure
-fix[AP-12]: resolve database connection issue
-docs[AP-15]: update README with development workflow
+feat(auth): implement JWT authentication (AP-7)
+fix(api): resolve database connection issue (AP-12)
+docs(readme): update development workflow (AP-15)
+style(ui): format CSS according to style guide (AP-18)
+refactor(utils): simplify error handling functions (AP-20)
 ```
+
+The scope is optional but recommended when it adds clarity. The ticket number should always be included.
 
 For more details on Conventional Commits, visit [https://www.conventionalcommits.org/](https://www.conventionalcommits.org/)
