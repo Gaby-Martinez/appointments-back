@@ -26,3 +26,4 @@ poetry.lock
 
 # Pytest
 .pytest_cache/
+.coverage
