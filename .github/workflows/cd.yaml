@@ -1,0 +1,35 @@
+name: Continuous Deployment
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yaml
+
+  deploy:
+    needs: ci
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Minikube and Build
+        run: |
+          minikube start
+          eval $(minikube -p minikube docker-env)
+          docker build -t appointments-backend:${{ github.ref_name }} .
+
+      - name: Deploy to Minikube
+        run: |
+          sed -i 's|appointments-backend:${TAG}|appointments-backend:${{ github.ref_name }}|' infrastructure/k8s/deployment.yaml
+          kubectl create namespace appointments || true
+          kubectl apply -f infrastructure/k8s/deployment.yaml -n appointments
+          kubectl apply -f infrastructure/k8s/service.yaml -n appointments
+          kubectl rollout status deployment/appointments-backend -n appointments
+
+      - name: Verify Deployment
+        run: |
+          kubectl get pods -n appointments
+          kubectl get services -n appointments

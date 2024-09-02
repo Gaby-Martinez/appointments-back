@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appointments-backend
+  namespace: appointments
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: appointments-backend
+  template:
+    metadata:
+      labels:
+        app: appointments-backend
+    spec:
+      containers:
+        - name: appointments-backend
+          image: appointments-backend:${TAG}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          # envFrom:
+          #   - secretRef:
+          #       name: appointments-secrets
+          resources:
+            limits:
+              cpu: "0.5"
+              memory: "512Mi"
+            requests:
+              cpu: "0.2"
+              memory: "256Mi"
