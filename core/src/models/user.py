@@ -1,5 +1,6 @@
 from datetime import date
 from typing import List, Optional
+from uuid import UUID, uuid4
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
@@ -7,7 +8,7 @@ from core.src.models.role import Role
 
 
 class User(BaseModel):
-    id: Optional[int] = None
+    id: Optional[UUID] = Field(default_factory=uuid4)
     ci: str = Field(..., min_length=5, max_length=20)
     password: str = Field(..., min_length=8)
     first_name: str = Field(..., min_length=1, max_length=50)
@@ -17,6 +18,7 @@ class User(BaseModel):
     phone_number: str = Field(..., pattern=r"^\+?1?\d{9,15}$")
     document_type: str = Field(..., max_length=20)
     roles: List[Role] = Field(..., min_length=1)
+    is_active: bool = True
 
     def is_doctor(self) -> bool:
         return Role.DOCTOR in self.roles
@@ -36,6 +38,7 @@ class User(BaseModel):
                 "phone_number": "+1234567890",
                 "document_type": "national_id",
                 "roles": [Role.PATIENT],
+                "is_active": True,
             }
         }
     )
