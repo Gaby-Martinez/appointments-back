@@ -2,8 +2,7 @@ from typing import List, Optional
 from uuid import UUID, uuid4
 
 from core.src.exceptions.repository import RepositoryOperationException
-from core.src.models.role import Role
-from core.src.models.user import User
+from core.src.models import Role, User
 from core.src.repositories.user_repository import UserRepository
 
 
@@ -15,6 +14,15 @@ class MemoryUserRepository(UserRepository):
 
     async def create(self, user: User) -> User:
         try:
+            if user.email in self.email_index:
+                raise RepositoryOperationException(
+                    "User", "create", "Email already exists"
+                )
+            if user.ci in self.ci_index:
+                raise RepositoryOperationException(
+                    "User", "create", "CI already exists"
+                )
+
             if user.id is None:
                 user.id = uuid4()
 
@@ -23,11 +31,11 @@ class MemoryUserRepository(UserRepository):
             self.ci_index[user.ci] = user.id
             return user
         except Exception as e:
-            if self.users is not None:
+            if user.id in self.users:
                 self.users.pop(user.id, None)
-            if self.email_index is not None:
+            if user.email in self.email_index:
                 self.email_index.pop(user.email, None)
-            if self.ci_index is not None:
+            if user.ci in self.ci_index:
                 self.ci_index.pop(user.ci, None)
             raise RepositoryOperationException("User", "create", str(e))
 
@@ -89,13 +97,7 @@ class MemoryUserRepository(UserRepository):
             raise RepositoryOperationException("User", "get_users_by_role", str(e))
 
     async def get_all_doctors(self, include_inactive: bool = False) -> List[User]:
-        try:
-            return await self.get_users_by_role(Role.DOCTOR, include_inactive)
-        except Exception as e:
-            raise RepositoryOperationException("User", "get_all_doctors", str(e))
+        return await self.get_users_by_role(Role.DOCTOR, include_inactive)
 
     async def get_all_patients(self, include_inactive: bool = False) -> List[User]:
-        try:
-            return await self.get_users_by_role(Role.PATIENT, include_inactive)
-        except Exception as e:
-            raise RepositoryOperationException("User", "get_all_patients", str(e))
+        return await self.get_users_by_role(Role.PATIENT, include_inactive)
