@@ -2,9 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Generic, List, Optional, TypeVar
 from uuid import UUID
 
-from pydantic import BaseModel
-
-T = TypeVar("T", bound=BaseModel)
+T = TypeVar("T")
 
 
 class BaseRepository(ABC, Generic[T]):

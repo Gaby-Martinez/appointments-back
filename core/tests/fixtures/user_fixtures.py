@@ -7,7 +7,7 @@ from core.src.models import Role, User
 
 
 @pytest.fixture
-def user_repository():
+async def user_repository() -> MemoryUserRepository:
     return MemoryUserRepository()
 
 

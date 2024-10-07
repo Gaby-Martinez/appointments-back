@@ -1,3 +1,4 @@
+from dataclasses import replace
 from typing import Dict, List, Optional
 from uuid import UUID, uuid4
 
@@ -24,7 +25,7 @@ class MemoryUserRepository(UserRepository):
                 )
 
             if user.id is None:
-                user.id = uuid4()
+                user = replace(user, id=uuid4())
 
             self.users[user.id] = user
             self.email_index[user.email] = user.id
@@ -32,11 +33,11 @@ class MemoryUserRepository(UserRepository):
             return user
         except Exception as e:
             if user.id in self.users:
-                self.users.pop(user.id, None)
+                del self.users[user.id]
             if user.email in self.email_index:
-                self.email_index.pop(user.email, None)
+                del self.email_index[user.email]
             if user.ci in self.ci_index:
-                self.ci_index.pop(user.ci, None)
+                del self.ci_index[user.ci]
             raise RepositoryOperationException("User", "create", str(e))
 
     async def get_by_id(
