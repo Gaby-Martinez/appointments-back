@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Dict, List, Optional
 from uuid import UUID, uuid4
 
 from core.src.exceptions.repository import RepositoryOperationException
@@ -8,9 +8,9 @@ from core.src.repositories.user_repository import UserRepository
 
 class MemoryUserRepository(UserRepository):
     def __init__(self):
-        self.users = {}
-        self.email_index = {}
-        self.ci_index = {}
+        self.users: Dict[UUID, User] = {}
+        self.email_index: Dict[str, UUID] = {}
+        self.ci_index: Dict[str, UUID] = {}
 
     async def create(self, user: User) -> User:
         try:

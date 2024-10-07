@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
-from core.src.models.role import Role
-from core.src.models.user import User
+from core.src.models import Role, User
 from core.src.repositories.base_repository import BaseRepository
 
 

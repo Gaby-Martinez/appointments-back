@@ -1,54 +1,79 @@
+from dataclasses import replace
+from datetime import date
 from uuid import UUID, uuid4
 
 import pytest
 
 from core.src.exceptions.repository import RepositoryOperationException
-from core.src.models.role import Role
+from core.src.models import Role, User
+from core.src.repositories.user_repository import UserRepository
 
 
-async def test_create_user(user_repository, sample_user):
+async def test_create_user(user_repository: UserRepository, sample_user: User):
     created_user = await user_repository.create(sample_user)
     assert created_user.id is not None
     assert isinstance(created_user.id, UUID)
     assert await user_repository.get_by_id(created_user.id) == created_user
 
 
-async def test_create_user_with_existing_id(user_repository, sample_user):
+async def test_create_user_with_no_roles(user_repository: UserRepository) -> None:
+    with pytest.raises(ValueError, match="User must have at least one role"):
+        invalid_user = User(
+            ci="000000000",
+            password="securepassword123",
+            first_name="Test",
+            last_name="User",
+            email="no_role_user@example.com",
+            date_of_birth=date(1990, 1, 1),
+            phone_number="+1234567890",
+            document_type="national_id",
+            roles=[],  # No roles
+            is_active=True,
+        )
+        await user_repository.create(invalid_user)
+
+
+async def test_create_user_with_existing_id(
+    user_repository: UserRepository, sample_user: User
+):
     sample_user.id = uuid4()
     created_user = await user_repository.create(sample_user)
     assert created_user.id == sample_user.id
     assert await user_repository.get_by_id(created_user.id) == created_user
 
 
-async def test_create_user_with_none_id(user_repository, sample_user):
-    sample_user.id = None
+async def test_create_user_with_none_id(
+    user_repository: UserRepository, sample_user: User
+):
     created_user = await user_repository.create(sample_user)
     assert created_user.id is not None
     assert isinstance(created_user.id, UUID)
     assert await user_repository.get_by_id(created_user.id) == created_user
 
 
-async def test_create_user_with_existing_email(user_repository, sample_user):
+async def test_create_user_with_existing_email(
+    user_repository: UserRepository, sample_user: User
+):
     await user_repository.create(sample_user)
-    duplicate_user = sample_user.copy()
-    duplicate_user.id = None
-    duplicate_user.ci = "5610293847"
+    duplicate_user = replace(sample_user, id=None, ci="5610293847")
     with pytest.raises(RepositoryOperationException) as exc_info:
         await user_repository.create(duplicate_user)
     assert "Email already exists" in str(exc_info.value)
 
 
-async def test_create_user_with_existing_ci(user_repository, sample_user):
+async def test_create_user_with_existing_ci(
+    user_repository: UserRepository, sample_user: User
+):
     await user_repository.create(sample_user)
-    duplicate_user = sample_user.copy()
-    duplicate_user.id = None
-    duplicate_user.email = "different@email.com"
+    duplicate_user = replace(sample_user, id=None, email="different@email.com")
     with pytest.raises(RepositoryOperationException) as exc_info:
         await user_repository.create(duplicate_user)
     assert "CI already exists" in str(exc_info.value)
 
 
-async def test_create_user_with_multiple_roles(user_repository, sample_user):
+async def test_create_user_with_multiple_roles(
+    user_repository: UserRepository, sample_user: User
+):
     sample_user.roles = [Role.PATIENT, Role.DOCTOR]
     created_user = await user_repository.create(sample_user)
     assert set(created_user.roles) == {Role.PATIENT, Role.DOCTOR}
@@ -57,7 +82,9 @@ async def test_create_user_with_multiple_roles(user_repository, sample_user):
     assert created_user in doctors and created_user in patients
 
 
-async def test_repository_operation_exception_on_create(user_repository, sample_user):
+async def test_repository_operation_exception_on_create(
+    user_repository: UserRepository, sample_user: User
+):
     user_repository.users = {}
     user_repository.email_index = {}
     user_repository.ci_index = {}
