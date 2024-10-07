@@ -1,10 +1,15 @@
-from typing import Optional
+from dataclasses import dataclass, field
+from typing import List
 
-from pydantic import BaseModel
+from .role import Role
+from .user import User
 
 
-class Patient(BaseModel):
-    id: Optional[int] = None
-    user_id: int
+@dataclass
+class Patient(User):
+    roles: List[Role] = field(default_factory=lambda: [Role.PATIENT])
 
-    model_config = {"json_schema_extra": {"example": {"id": 1, "user_id": 1}}}
+    def __post_init__(self):
+        super().__post_init__()
+        if Role.PATIENT not in self.roles:
+            raise ValueError("Must have patient role")
