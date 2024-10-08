@@ -1,13 +1,14 @@
 from dataclasses import dataclass, field
 from datetime import date
 from typing import List
-from uuid import UUID, uuid4
+from uuid import UUID
 
-from core.src.models.role import Role
+from core.src.models.role import Role, RoleEnum
 
 
 @dataclass
 class User:
+    id: UUID
     ci: str
     password: str
     first_name: str
@@ -18,14 +19,13 @@ class User:
     document_type: str
     roles: List[Role] = field(default_factory=list)
     is_active: bool = True
-    id: UUID = field(default_factory=uuid4)
 
     def __post_init__(self):
         if not self.roles:
             raise ValueError("User must have at least one role")
 
     def is_doctor(self) -> bool:
-        return Role.DOCTOR in self.roles
+        return any(role.name == RoleEnum.DOCTOR for role in self.roles)
 
     def is_patient(self) -> bool:
-        return Role.PATIENT in self.roles
+        return any(role.name == RoleEnum.PATIENT for role in self.roles)

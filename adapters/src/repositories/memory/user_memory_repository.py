@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 from uuid import UUID, uuid4
 
 from core.src.exceptions.repository import RepositoryOperationException
-from core.src.models import Role, User
+from core.src.models import RoleEnum, User
 from core.src.repositories.user_repository import UserRepository
 
 
@@ -86,19 +86,20 @@ class MemoryUserRepository(UserRepository):
             raise RepositoryOperationException("User", "list", str(e))
 
     async def get_users_by_role(
-        self, role: Role, include_inactive: bool = False
+        self, role: RoleEnum, include_inactive: bool = False
     ) -> List[User]:
         try:
             return [
                 user
                 for user in self.users.values()
-                if role in user.roles and (include_inactive or user.is_active)
+                if any(r.name == role for r in user.roles)
+                and (include_inactive or user.is_active)
             ]
         except Exception as e:
             raise RepositoryOperationException("User", "get_users_by_role", str(e))
 
     async def get_all_doctors(self, include_inactive: bool = False) -> List[User]:
-        return await self.get_users_by_role(Role.DOCTOR, include_inactive)
+        return await self.get_users_by_role(RoleEnum.DOCTOR, include_inactive)
 
     async def get_all_patients(self, include_inactive: bool = False) -> List[User]:
-        return await self.get_users_by_role(Role.PATIENT, include_inactive)
+        return await self.get_users_by_role(RoleEnum.PATIENT, include_inactive)

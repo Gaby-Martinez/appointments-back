@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
-from core.src.models import Role, User
+from core.src.models import RoleEnum, User
 from core.src.repositories.base_repository import BaseRepository
 
 
@@ -20,7 +20,7 @@ class UserRepository(BaseRepository[User], ABC):
 
     @abstractmethod
     async def get_users_by_role(
-        self, role: Role, include_inactive: bool = False
+        self, role: RoleEnum, include_inactive: bool = False
     ) -> List[User]:
         raise NotImplementedError
 
