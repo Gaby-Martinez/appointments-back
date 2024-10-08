@@ -7,7 +7,7 @@ from adapters.src.repositories.memory.patient_memory_repository import (
     MemoryPatientRepository,
 )
 from adapters.src.repositories.memory.user_memory_repository import MemoryUserRepository
-from core.src.models import Patient, Role
+from core.src.models import Patient, Role, RoleEnum
 
 
 @pytest.fixture
@@ -29,7 +29,7 @@ def sample_patient() -> Patient:
         date_of_birth=date(1990, 5, 15),
         phone_number="+1987654321",
         document_type="national_id",
-        roles=[Role.PATIENT],
+        roles=[Role(name=RoleEnum.PATIENT)],
         is_active=True,
     )
 
@@ -46,6 +46,6 @@ def inactive_sample_patient() -> Patient:
         date_of_birth=date(1985, 3, 22),
         phone_number="+1234567890",
         document_type="national_id",
-        roles=[Role.PATIENT],
+        roles=[Role(name=RoleEnum.PATIENT)],
         is_active=False,
     )
