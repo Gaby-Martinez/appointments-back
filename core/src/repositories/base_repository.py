@@ -1,28 +1,30 @@
 from abc import ABC, abstractmethod
 from typing import Generic, List, Optional, TypeVar
+from uuid import UUID
 
-from pydantic import BaseModel
-
-T = TypeVar("T", bound=BaseModel)
+T = TypeVar("T")
 
 
 class BaseRepository(ABC, Generic[T]):
     @abstractmethod
     async def create(self, entity: T) -> T:
-        pass
+        raise NotImplementedError
 
     @abstractmethod
-    async def get_by_id(self, entity_id: int) -> Optional[T]:
-        pass
+    async def get_by_id(
+        self, entity_id: UUID, include_inactive: bool = False
+    ) -> Optional[T]:
+        raise NotImplementedError
 
     @abstractmethod
+    async def list(self, include_inactive: bool = False) -> List[T]:
+        raise NotImplementedError
+
     async def update(self, entity: T) -> T:
-        pass
+        raise NotImplementedError("Update operation is not implemented")
 
-    @abstractmethod
-    async def delete(self, entity_id: int) -> bool:
-        pass
+    async def delete(self, entity_id: UUID) -> bool:
+        raise NotImplementedError("Delete operation is not implemented")
 
-    @abstractmethod
-    async def list(self) -> List[T]:
-        pass
+    async def restore(self, entity_id: UUID) -> bool:
+        raise NotImplementedError("Restore operation is not implemented")
