@@ -5,8 +5,8 @@ import pytest
 
 from adapters.src.repositories.memory.user_memory_repository import MemoryUserRepository
 from core.src.exceptions.repository import RepositoryOperationException
+from core.src.models import RoleEnum, User
 from core.src.models.role import Role
-from core.src.models.user import User
 
 
 async def test_list_users(user_repository: MemoryUserRepository, sample_user: User):
@@ -69,7 +69,7 @@ async def test_list_with_active_and_inactive_users(
             id=uuid4(),
             email="user2@example.com",
             ci="ci2",
-            roles=[Role.DOCTOR],
+            roles=[Role(name=RoleEnum.DOCTOR)],
         ),
         replace(
             sample_user,
@@ -102,14 +102,14 @@ async def test_get_users_by_role(
     doctor_user = replace(
         sample_user,
         id=uuid4(),
-        roles=[Role.DOCTOR],
+        roles=[Role(name=RoleEnum.DOCTOR)],
         email="doctor@example.com",
         ci="987654321",
     )
     await user_repository.create(doctor_user)
 
-    doctors = await user_repository.get_users_by_role(Role.DOCTOR)
-    patients = await user_repository.get_users_by_role(Role.PATIENT)
+    doctors = await user_repository.get_users_by_role(RoleEnum.DOCTOR)
+    patients = await user_repository.get_users_by_role(RoleEnum.PATIENT)
 
     assert len(doctors) == 1
     assert doctors[0].email == "doctor@example.com"
@@ -125,7 +125,7 @@ async def test_get_all_doctors(
     doctor_user = replace(
         sample_user,
         id=uuid4(),
-        roles=[Role.DOCTOR],
+        roles=[Role(name=RoleEnum.DOCTOR)],
         email="doctor@example.com",
         ci="doctor-ci",
     )
@@ -145,7 +145,7 @@ async def test_get_all_patients(
     doctor_user = replace(
         sample_user,
         id=uuid4(),
-        roles=[Role.DOCTOR],
+        roles=[Role(name=RoleEnum.DOCTOR)],
         email="doctor@example.com",
         ci="doctor-ci",
     )
@@ -163,7 +163,7 @@ async def test_list_no_users(user_repository: MemoryUserRepository):
 
 
 async def test_list_no_matching_role(user_repository: MemoryUserRepository):
-    doctors = await user_repository.get_users_by_role(Role.DOCTOR)
+    doctors = await user_repository.get_users_by_role(RoleEnum.DOCTOR)
     assert doctors == []
 
 
@@ -190,7 +190,7 @@ async def test_repository_operation_exception_on_get_users_by_role(
     user_repository.users = None  # type: ignore
 
     with pytest.raises(RepositoryOperationException) as exc_info:
-        await user_repository.get_users_by_role(Role.DOCTOR)
+        await user_repository.get_users_by_role(RoleEnum.DOCTOR)
 
     assert "User" in str(exc_info.value)
     assert "get_users_by_role" in str(exc_info.value)

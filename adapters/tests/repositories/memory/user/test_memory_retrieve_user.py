@@ -9,9 +9,23 @@ from core.src.models.user import User
 
 
 async def test_get_by_id(user_repository: MemoryUserRepository, sample_user: User):
-    await user_repository.create(sample_user)
-    retrieved_user = await user_repository.get_by_id(sample_user.id)
-    assert retrieved_user == sample_user
+    created_user = await user_repository.create(sample_user)
+    retrieved_user = await user_repository.get_by_id(created_user.id)
+
+    assert retrieved_user is not None
+
+    assert retrieved_user.ci == sample_user.ci
+    assert retrieved_user.password == sample_user.password
+    assert retrieved_user.first_name == sample_user.first_name
+    assert retrieved_user.last_name == sample_user.last_name
+    assert retrieved_user.email == sample_user.email
+    assert retrieved_user.date_of_birth == sample_user.date_of_birth
+    assert retrieved_user.phone_number == sample_user.phone_number
+    assert retrieved_user.document_type == sample_user.document_type
+    assert retrieved_user.roles == sample_user.roles
+    assert retrieved_user.is_active == sample_user.is_active
+
+    assert retrieved_user.id == created_user.id
 
 
 async def test_get_by_id_not_found(user_repository: MemoryUserRepository):
