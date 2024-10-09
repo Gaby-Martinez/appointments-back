@@ -1,8 +1,19 @@
-from abc import ABC
+from abc import ABC, abstractmethod
+from typing import Optional
 
 from core.src.models.patient import Patient
 from core.src.repositories.base_repository import BaseRepository
 
 
 class PatientRepository(BaseRepository[Patient], ABC):
-    pass
+    @abstractmethod
+    async def get_by_email(
+        self, email: str, include_inactive: bool = False
+    ) -> Optional[Patient]:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def get_by_ci(
+        self, ci: str, include_inactive: bool = False
+    ) -> Optional[Patient]:
+        raise NotImplementedError
