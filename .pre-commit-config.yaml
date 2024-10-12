@@ -28,5 +28,5 @@ repos:
         entry: pytest
         language: system
         types: [python]
-        args: ["-v", "--no-header", "--no-summary", "--disable-warnings"]
-        pass_filenames: true
+        pass_filenames: false
+        always_run: true
