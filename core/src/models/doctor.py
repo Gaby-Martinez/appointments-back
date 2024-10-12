@@ -1,13 +1,19 @@
-from typing import Optional
+from dataclasses import dataclass, field
+from typing import List, Optional
 
-from pydantic import BaseModel
+from .role import Role, RoleEnum
+from .specialty import Specialty
+from .user import User
 
 
-class Doctor(BaseModel):
-    id: Optional[int] = None
-    user_id: int
-    specialty_id: int
+@dataclass
+class Doctor(User):
+    specialty: Optional[Specialty] = None
+    roles: List[Role] = field(default_factory=lambda: [Role(name=RoleEnum.DOCTOR)])
 
-    model_config = {
-        "json_schema_extra": {"example": {"id": 1, "user_id": 2, "specialty_id": 1}}
-    }
+    def __post_init__(self):
+        super().__post_init__()
+        if self.specialty is None:
+            raise ValueError("Doctor must have a specialty")
+        if not any(role.name == RoleEnum.DOCTOR for role in self.roles):
+            raise ValueError("User must have the Doctor role")
