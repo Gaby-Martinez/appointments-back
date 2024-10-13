@@ -3,5 +3,6 @@ pytest_plugins = [
     "core.tests.fixtures.patient_fixtures",
     "core.tests.fixtures.specialty_fixtures",
     "core.tests.fixtures.doctor_fixtures",
+    "core.tests.fixtures.appointment_fixtures",
     "core.tests.fixtures.doctor_schedule_fixtures",
 ]

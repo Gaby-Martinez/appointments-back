@@ -1,3 +1,5 @@
+from .appointment import Appointment
+from .appointment_status import AppointmentStatus, AppointmentStatusEnum
 from .doctor import Doctor
 from .doctor_schedule import DoctorSchedule
 from .patient import Patient
@@ -13,4 +15,7 @@ __all__ = [
     "Doctor",
     "Specialty",
     "DoctorSchedule",
+    "Appointment",
+    "AppointmentStatus",
+    "AppointmentStatusEnum",
 ]
