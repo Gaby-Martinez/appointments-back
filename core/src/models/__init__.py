@@ -1,5 +1,5 @@
 from .appointment import Appointment
-from .appointment_status import AppointmentStatus
+from .appointment_status import AppointmentStatus, AppointmentStatusEnum
 from .doctor import Doctor
 from .patient import Patient
 from .role import Role, RoleEnum
@@ -15,4 +15,5 @@ __all__ = [
     "Specialty",
     "Appointment",
     "AppointmentStatus",
+    "AppointmentStatusEnum",
 ]

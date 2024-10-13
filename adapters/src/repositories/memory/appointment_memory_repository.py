@@ -5,10 +5,11 @@ from uuid import UUID, uuid4
 
 from core.src.exceptions.repository import RepositoryOperationException
 from core.src.models import Appointment
+from core.src.repositories.appointment_repository import AppointmentRepository
 
 
-class AppointmentRepository:
-    def __init__(self):
+class MemoryAppointmentRepository(AppointmentRepository):
+    def __init__(self) -> None:
         self.appointments: Dict[UUID, Appointment] = {}
 
     async def create(self, appointment: Appointment) -> Appointment:
@@ -20,13 +21,15 @@ class AppointmentRepository:
         except Exception as e:
             raise RepositoryOperationException("Appointment", "create", str(e))
 
-    async def get_by_id(self, appointment_id: UUID) -> Optional[Appointment]:
+    async def get_by_id(
+        self, appointment_id: UUID, include_inactive: bool = False
+    ) -> Optional[Appointment]:
         try:
             return self.appointments.get(appointment_id)
         except Exception as e:
             raise RepositoryOperationException("Appointment", "get_by_id", str(e))
 
-    async def list(self) -> List[Appointment]:
+    async def list(self, include_inactive: bool = False) -> List[Appointment]:
         try:
             return list(self.appointments.values())
         except Exception as e:
