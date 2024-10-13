@@ -12,7 +12,6 @@ from core.src.exceptions.repository import RepositoryOperationException
 from core.src.models import DoctorSchedule
 
 
-@pytest.mark.asyncio
 async def test_list_doctor_schedules(
     doctor_schedule_repository: MemoryDoctorScheduleRepository,
     sample_doctor_weekly_schedule: List[DoctorSchedule],
@@ -29,7 +28,6 @@ async def test_list_doctor_schedules(
     for created_schedule in created_schedules:
         assert created_schedule in doctor_schedules_list
 
-    # Optional: Assert that the schedules are for different days
     days = [schedule.day_of_week for schedule in doctor_schedules_list]
     assert len(set(days)) == len(days), "All schedules should be for different days"
 

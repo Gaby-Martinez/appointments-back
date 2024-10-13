@@ -143,7 +143,6 @@ async def test_get_by_doctor_and_day_no_schedule(
     assert len(schedules) == 0
 
 
-@pytest.mark.asyncio
 async def test_get_available_slots_no_schedule(
     populated_repository: MemoryDoctorScheduleRepository,
     sample_doctor: Doctor,
